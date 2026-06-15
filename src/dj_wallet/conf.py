@@ -1,9 +1,13 @@
 """
 Configuration settings for dj_wallet.
 
-Settings can be overridden in your Django settings.py using the dj_wallet dictionary.
-"""
+Settings can be overridden in your Django settings.py using the DJ_WALLET dictionary:
 
+    DJ_WALLET = {
+        "MATH_SCALE": 0,
+        "DEFAULT_CURRENCY": "USD",
+    }
+"""
 from dataclasses import dataclass
 from typing import Any
 
@@ -34,7 +38,7 @@ class WalletSettings:
 
     def __init__(self):
         """Initialize settings from Django settings if available."""
-        user_settings = getattr(django_settings, "dj_wallet", {})
+        user_settings = getattr(django_settings, "DJ_WALLET", {})
 
         for key, _ in self.__class__.__dataclass_fields__.items():
             # Map user setting keys (without WALLET_ prefix) to our attributes
@@ -56,13 +60,13 @@ class WalletSettings:
         # Validate MATH_SCALE
         if not isinstance(self.WALLET_MATH_SCALE, int) or self.WALLET_MATH_SCALE < 0:
             raise ImproperlyConfigured(
-                "dj_wallet['MATH_SCALE'] must be a non-negative integer. "
+                "DJ_WALLET['MATH_SCALE'] must be a non-negative integer. "
                 f"Got: {self.WALLET_MATH_SCALE}"
             )
 
         if self.WALLET_MATH_SCALE > 30:
             raise ImproperlyConfigured(
-                "dj_wallet['MATH_SCALE'] must be at most 30. "
+                "DJ_WALLET['MATH_SCALE'] must be at most 30. "
                 f"Got: {self.WALLET_MATH_SCALE}"
             )
 
@@ -72,7 +76,7 @@ class WalletSettings:
             or len(self.WALLET_DEFAULT_CURRENCY) == 0
         ):
             raise ImproperlyConfigured(
-                "dj_wallet['DEFAULT_CURRENCY'] must be a non-empty string. "
+                "DJ_WALLET['DEFAULT_CURRENCY'] must be a non-empty string. "
                 f"Got: {self.WALLET_DEFAULT_CURRENCY}"
             )
 
@@ -87,7 +91,7 @@ class WalletSettings:
         for name, value in service_classes:
             if not isinstance(value, str) or "." not in value:
                 raise ImproperlyConfigured(
-                    f"dj_wallet['{name}'] must be a valid dotted path string. "
+                    f"DJ_WALLET['{name}'] must be a valid dotted path string. "
                     f"Got: {value}"
                 )
 
@@ -97,7 +101,7 @@ class WalletSettings:
             or self.PENDING_TRANSACTION_EXPIRY_HOURS < 1
         ):
             raise ImproperlyConfigured(
-                "dj_wallet['PENDING_TRANSACTION_EXPIRY_HOURS'] must be a positive integer. "
+                "DJ_WALLET['PENDING_TRANSACTION_EXPIRY_HOURS'] must be a positive integer. "
                 f"Got: {self.PENDING_TRANSACTION_EXPIRY_HOURS}"
             )
 
